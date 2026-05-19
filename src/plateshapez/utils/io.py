@@ -45,7 +45,7 @@ def iter_images(directory: str | Path, extensions: list[str] | None = None) -> I
 
 def iter_backgrounds(directory: str | Path) -> Iterator[Path]:
     """Iterate over background images (typically JPG)."""
-    return iter_images(directory, [".jpg", ".jpeg"])
+    return iter_images(directory, [".jpg", ".jpeg", ".png"])
 
 
 def iter_overlays(directory: str | Path) -> Iterator[Path]:
