@@ -5,6 +5,8 @@ from tkinter import filedialog
 import os
 import csv
 
+import numpy as np
+
 # --- Directory Selection Dialog ---
 # We don't need the main tkinter window, so we hide it.
 root = tk.Tk()
@@ -68,22 +70,43 @@ if directory_path:
                         detection = pred.detection
                         ocr = pred.ocr
                         bounding_box = detection.bounding_box
+
+                        # Calculate mean confidence if it's a list, otherwise use float directly
+                        conf_val = sum(ocr.confidence) / len(ocr.confidence) if isinstance(ocr.confidence, list) and ocr.confidence else ocr.confidence
                         
                         csv_writer.writerow([
                             image_name,
                             ocr.text,
-                            f"{ocr.confidence:.4f}",
+                            f"{conf_val:.4f}",
                             bounding_box.x1,
                             bounding_box.y1,
                             bounding_box.x2,
                             bounding_box.y2
                         ])
                     print(f"    - Found {len(predictions)} plate(s).")
-
+                    
                 # --- Save Annotated Image ---
-                annotated_frame = alpr.draw_predictions(frame)
+                # fast_alpr draws predictions directly onto a copy of the frame,
+                # or pass predictions explicitly if your version requires it:
+                try:
+                    annotated_frame = alpr.draw_predictions(frame, predictions)
+                except TypeError:
+                    # In case your fast_alpr version takes only frame
+                    annotated_frame = alpr.draw_predictions(frame)
+
                 output_path = os.path.join(output_dir, image_name)
-                cv2.imwrite(output_path, annotated_frame)
+
+                # Ensure result is a valid NumPy image array
+                if annotated_frame is not None and isinstance(annotated_frame, np.ndarray):
+                    # Check if colors need BGR/RGB conversion
+                    if annotated_frame.dtype == np.uint8 and annotated_frame.ndim == 3:
+                        cv2.imwrite(output_path, annotated_frame)
+                    else:
+                        cv2.imwrite(output_path, frame)
+                else:
+                    # Fallback to original frame if draw_predictions failed or returned unexpected type
+                    cv2.imwrite(output_path, frame)
+                    print(f"    - Warning: Could not draw annotations for {image_name}. Saved original frame.")
 
         print("\nProcessing complete!")
         print(f"CSV data saved to: {csv_path}")

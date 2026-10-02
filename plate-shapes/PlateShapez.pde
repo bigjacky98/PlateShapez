@@ -8,18 +8,18 @@ PImage overlayImg;
 
 // --- You can customize these variables here ---
 // your license plate image is your overlay, you'll want it to be nicely cropped, and a transparent png is ideal
-String overlayImageName = "poo5000_500.png";
-int numShapes = 15;
+String overlayImageName = "IMG_3724.png";
+int numShapes = 25;
 float minShapeSize = 0.25;
 float maxShapeSize = 2;
 
 // Define the license plate's exact size and position. This part is going to take a bit of trial and error
 // You're going to want to make the license plate/overlay image nicely cover the plate in the background photo
 // All values are in pixels, if you're going this with many images, I recommend aligning in PS or GIMP rather than guessing
-int overlayWidth = 40;
-int overlayHeight = 20;
-int overlayX = 577; // X-coordinate from the left edge.
-int overlayY = 537; // Y-coordinate from the top edge.
+int overlayWidth = 60;
+int overlayHeight = 30;
+int overlayX = 1000; // X-coordinate from the left edge.
+int overlayY = 465; // Y-coordinate from the top edge.
 // -----------------------------------------------
 
 void setup() {
@@ -27,10 +27,10 @@ void setup() {
 
   // Load a background image. It doesn't NEED to be of traffic, but it should at least be of a vehichle so it works across various ALPR models
   try {
-    bgImg = loadImage("background.jpg");
+    bgImg = loadImage("car2.jpeg");
     bgImg.resize(width, height);
   } catch (Exception e) {
-    println("ERROR: 'background.jpg' not found in 'data' folder.");
+    println("ERROR: 'car2.jpeg' not found in 'data' folder.");
   }
 
   // Load the overlay image.
@@ -68,7 +68,7 @@ void generateArtwork() {
   }
 
   // 1. DRAW THE BACKGROUND
-  background(bgImg);
+  image(bgImg, 0, 0, width, height);
 
   // 2. DRAW THE OVERLAY IMAGE
   // The position and size are now taken from the static variables at the top.

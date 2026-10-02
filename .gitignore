@@ -65,3 +65,7 @@ Thumbs.db
 .site/
 *.jpg
 *.png
+
+plate-shapes/data
+plate-shapes/results
+plate-shapes/sketch.properties
